@@ -266,7 +266,7 @@ st.set_page_config(
 st.markdown("""
 <div style="text-align: center; padding: 20px; background: linear-gradient(45deg, #2196F3, #21CBF3); color: white; border-radius: 10px; margin-bottom: 20px;">
     <h1>🥵 Hotflake Janice SQL Learning Platform</h1>
-    <p>Learn Snowflake SQL with JJ Janice</p>
+    <p>Learn how to calm hotflake janice 🥵 SQL with JJ Janice</p>
 </div>
 """, unsafe_allow_html=True)
 

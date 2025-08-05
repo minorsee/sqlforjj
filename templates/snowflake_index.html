@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snowflake SQL Learning Platform</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #2196F3, #21CBF3);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .section h2 {
+            color: #333;
+            border-left: 4px solid #2196F3;
+            padding-left: 15px;
+            margin-bottom: 20px;
+        }
+        .schema-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+        }
+        .table-info {
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 3px solid #2196F3;
+        }
+        .table-name {
+            font-weight: bold;
+            color: #2196F3;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+        }
+        .columns {
+            margin-left: 20px;
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .column {
+            background: #e3f2fd;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #bbdefb;
+        }
+        .snowflake-features {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        textarea {
+            width: 100%;
+            height: 140px;
+            padding: 15px;
+            border: 2px solid #2196F3;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            background: #fafafa;
+        }
+        button {
+            background: linear-gradient(45deg, #2196F3, #21CBF3);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #f44336;
+        }
+        .success-info {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4caf50;
+        }
+        .translation-info {
+            background: #fff3e0;
+            color: #ef6c00;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            border-left: 4px solid #ff9800;
+        }
+        .table-container {
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 400px;
+            margin-top: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+        th, td {
+            padding: 6px 8px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        th {
+            background: #f5f5f5;
+            color: #333;
+            font-weight: bold;
+            border-bottom: 2px solid #ddd;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e3f2fd;
+        }
+        .examples {
+            background: #e8f5e8;
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #4caf50;
+        }
+        .example-category {
+            margin-bottom: 20px;
+        }
+        .example-category h3 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .example-query {
+            background: white;
+            padding: 12px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 8px 0;
+            cursor: pointer;
+            border: 1px solid #c8e6c9;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+        .example-query:hover {
+            background: #f1f8e9;
+            border-color: #4caf50;
+            transform: translateX(5px);
+        }
+        .snowflake-badge {
+            display: inline-block;
+            background: #2196F3;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🥵 Hotflake Janice SQL Learning Platform</h1>
+            <p>Learn Snowflake SQL with JJ Janice</p>
+        </div>
+
+        
+        <div class="section">
+            <h2>📋 Available Tables</h2>
+            <div class="examples">
+                <h3>Ready to Query:</h3>
+                <ul style="font-family: 'Courier New', monospace; font-size: 14px; color: #2e7d32;">
+                    <li><strong>PAYMENT_DB.PUBLIC.TRANSACTIONS</strong> - Payment transaction records</li>
+                    <li><strong>PAYMENT_DB.PUBLIC.MERCHANTS</strong> - Business account information</li>
+                    <li><strong>PAYMENT_DB.PUBLIC.CUSTOMERS</strong> - Customer profile data</li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="section">
+            <details style="margin-bottom: 20px;">
+                <summary style="cursor: pointer; font-size: 18px; font-weight: bold; color: #333; padding: 10px 0;">💡 Show Example Queries</summary>
+                
+                <div style="text-align: center; margin: 15px 0; padding: 15px; background: #f0f8ff; border-radius: 8px; border: 1px dashed #2196F3;">
+                    <p style="margin: 0; color: #666; font-size: 14px;">
+                        🔑 <strong>Password for locked sections:</strong> <code style="background: #fff; padding: 3px 8px; border-radius: 3px; color: #2196F3; font-weight: bold;">ilovejj</code>
+                    </p>
+                </div>
+                
+                <div class="examples" style="margin-top: 15px;">
+                    
+                    <div class="example-category">
+                        <h3>Basic WHERE Queries</h3>
+                        <div class="example-query" onclick="setQuery('SELECT * FROM PAYMENT_DB.PUBLIC.TRANSACTIONS WHERE STATUS = \'SUCCESS\'')">
+                            SELECT * FROM PAYMENT_DB.PUBLIC.TRANSACTIONS WHERE STATUS = 'SUCCESS'
+                        </div>
+                        <div class="example-query" onclick="setQuery('SELECT * FROM PAYMENT_DB.PUBLIC.TRANSACTIONS WHERE AMOUNT > 100')">
+                            SELECT * FROM PAYMENT_DB.PUBLIC.TRANSACTIONS WHERE AMOUNT > 100
+                        </div>
+                        <div class="example-query" onclick="setQuery('SELECT * FROM PAYMENT_DB.PUBLIC.TRANSACTIONS WHERE STATUS = \'SUCCESS\' AND AMOUNT > 100')">
+                            SELECT * FROM PAYMENT_DB.PUBLIC.TRANSACTIONS WHERE STATUS = 'SUCCESS' AND AMOUNT > 100
+                        </div>
+                        <div class="example-query" onclick="setQuery('SELECT * FROM PAYMENT_DB.PUBLIC.MERCHANTS WHERE COUNTRY = \'USA\' AND STATUS = \'ACTIVE\'')">
+                            SELECT * FROM PAYMENT_DB.PUBLIC.MERCHANTS WHERE COUNTRY = 'USA' AND STATUS = 'ACTIVE'
+                        </div>
+                        <div class="example-query" onclick="setQuery('SELECT * FROM PAYMENT_DB.PUBLIC.CUSTOMERS WHERE RISK_SCORE < 50 OR TOTAL_TRANSACTIONS > 20')">
+                            SELECT * FROM PAYMENT_DB.PUBLIC.CUSTOMERS WHERE RISK_SCORE < 50 OR TOTAL_TRANSACTIONS > 20
+                        </div>
+                    </div>
+
+                    <div class="example-category" id="sorting-section">
+                        <h3>🔒 Sorting & Limiting Results (Password Protected)</h3>
+                        <div style="margin-bottom: 15px;">
+                            <input type="password" id="sorting-password" placeholder="Enter password" style="padding: 8px; margin-right: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                            <button onclick="unlockSorting()" style="padding: 8px 15px; background: #607d8b; color: white; border: none; border-radius: 4px; cursor: pointer;">Unlock</button>
+                        </div>
+                        <div id="sorting-content" style="display: none;">
+                            <div class="example-query" onclick="setQuery('SELECT * FROM PAYMENT_DB.PUBLIC.TRANSACTIONS ORDER BY AMOUNT DESC LIMIT 10')">
+                                SELECT * FROM PAYMENT_DB.PUBLIC.TRANSACTIONS ORDER BY AMOUNT DESC LIMIT 10
+                            </div>
+                            <div class="example-query" onclick="setQuery('SELECT * FROM PAYMENT_DB.PUBLIC.CUSTOMERS ORDER BY TOTAL_TRANSACTIONS ASC LIMIT 5')">
+                                SELECT * FROM PAYMENT_DB.PUBLIC.CUSTOMERS ORDER BY TOTAL_TRANSACTIONS ASC LIMIT 5
+                            </div>
+                            <div class="example-query" onclick="setQuery('SELECT DISTINCT COUNTRY FROM PAYMENT_DB.PUBLIC.MERCHANTS ORDER BY COUNTRY')">
+                                SELECT DISTINCT COUNTRY FROM PAYMENT_DB.PUBLIC.MERCHANTS ORDER BY COUNTRY
+                            </div>
+                            <div class="example-query" onclick="setQuery('SELECT DISTINCT STATUS FROM PAYMENT_DB.PUBLIC.TRANSACTIONS ORDER BY STATUS')">
+                                SELECT DISTINCT STATUS FROM PAYMENT_DB.PUBLIC.TRANSACTIONS ORDER BY STATUS
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="example-category" id="aggregation-section">
+                        <h3>🔒 Aggregation & Grouping (Password Protected)</h3>
+                        <div style="margin-bottom: 15px;">
+                            <input type="password" id="aggregation-password" placeholder="Enter password" style="padding: 8px; margin-right: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                            <button onclick="unlockAggregation()" style="padding: 8px 15px; background: #9c27b0; color: white; border: none; border-radius: 4px; cursor: pointer;">Unlock</button>
+                        </div>
+                        <div id="aggregation-content" style="display: none;">
+                            <div class="example-query" onclick="setQuery('SELECT COUNT(*) FROM PAYMENT_DB.PUBLIC.TRANSACTIONS')">
+                                SELECT COUNT(*) FROM PAYMENT_DB.PUBLIC.TRANSACTIONS
+                            </div>
+                            <div class="example-query" onclick="setQuery('SELECT STATUS, COUNT(*) FROM PAYMENT_DB.PUBLIC.TRANSACTIONS GROUP BY STATUS')">
+                                SELECT STATUS, COUNT(*) FROM PAYMENT_DB.PUBLIC.TRANSACTIONS GROUP BY STATUS
+                            </div>
+                            <div class="example-query" onclick="setQuery('SELECT COUNTRY, AVG(AMOUNT) as AVG_AMOUNT FROM PAYMENT_DB.PUBLIC.TRANSACTIONS GROUP BY COUNTRY ORDER BY AVG_AMOUNT DESC')">
+                                SELECT COUNTRY, AVG(AMOUNT) as AVG_AMOUNT FROM PAYMENT_DB.PUBLIC.TRANSACTIONS GROUP BY COUNTRY ORDER BY AVG_AMOUNT DESC
+                            </div>
+                            <div class="example-query" onclick="setQuery('SELECT BUSINESS_TYPE, COUNT(*), MAX(MONTHLY_VOLUME) FROM PAYMENT_DB.PUBLIC.MERCHANTS GROUP BY BUSINESS_TYPE')">
+                                SELECT BUSINESS_TYPE, COUNT(*), MAX(MONTHLY_VOLUME) FROM PAYMENT_DB.PUBLIC.MERCHANTS GROUP BY BUSINESS_TYPE
+                            </div>
+                            <div class="example-query" onclick="setQuery('SELECT PAYMENT_METHOD, SUM(AMOUNT) as TOTAL_REVENUE FROM PAYMENT_DB.PUBLIC.TRANSACTIONS WHERE STATUS = \'SUCCESS\' GROUP BY PAYMENT_METHOD ORDER BY TOTAL_REVENUE DESC')">
+                                SELECT PAYMENT_METHOD, SUM(AMOUNT) as TOTAL_REVENUE FROM PAYMENT_DB.PUBLIC.TRANSACTIONS WHERE STATUS = 'SUCCESS' GROUP BY PAYMENT_METHOD ORDER BY TOTAL_REVENUE DESC
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="example-category" id="snowflake-section">
+                        <h3>🔒 Snowflake Date Functions in WHERE (Password Protected)</h3>
+                        <div style="margin-bottom: 15px;">
+                            <input type="password" id="snowflake-password" placeholder="Enter password" style="padding: 8px; margin-right: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                            <button onclick="unlockSnowflake()" style="padding: 8px 15px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Unlock</button>
+                        </div>
+                        <div id="snowflake-content" style="display: none;">
+                            <div class="example-query" onclick="setQuery('SELECT * FROM PAYMENT_DB.PUBLIC.TRANSACTIONS WHERE DATE_TRUNC(\'MONTH\', TRANSACTION_TIMESTAMP) = \'2024-01-01\'')">
+                                SELECT * FROM PAYMENT_DB.PUBLIC.TRANSACTIONS WHERE DATE_TRUNC('MONTH', TRANSACTION_TIMESTAMP) = '2024-01-01'
+                            </div>
+                            <div class="example-query" onclick="setQuery('SELECT * FROM PAYMENT_DB.PUBLIC.TRANSACTIONS WHERE TRANSACTION_TIMESTAMP > \'2024-01-01\' AND STATUS = \'SUCCESS\'')">
+                                SELECT * FROM PAYMENT_DB.PUBLIC.TRANSACTIONS WHERE TRANSACTION_TIMESTAMP > '2024-01-01' AND STATUS = 'SUCCESS'
+                            </div>
+                            <div class="example-query" onclick="setQuery('SELECT TRY_CAST(AMOUNT AS NUMBER(10,2)) AS FORMATTED_AMOUNT FROM PAYMENT_DB.PUBLIC.TRANSACTIONS WHERE AMOUNT > 50')">
+                                SELECT TRY_CAST(AMOUNT AS NUMBER(10,2)) AS FORMATTED_AMOUNT FROM PAYMENT_DB.PUBLIC.TRANSACTIONS WHERE AMOUNT > 50
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="example-category" id="join-section">
+                        <h3>🔒 Snowflake JOIN Queries (Password Protected)</h3>
+                        <div style="margin-bottom: 15px;">
+                            <input type="password" id="join-password" placeholder="Enter password" style="padding: 8px; margin-right: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                            <button onclick="unlockJoin()" style="padding: 8px 15px; background: #ff9800; color: white; border: none; border-radius: 4px; cursor: pointer;">Unlock</button>
+                        </div>
+                        <div id="join-content" style="display: none;">
+                            <div class="example-query" onclick="setQuery('SELECT t.TRANSACTION_ID, t.AMOUNT, m.MERCHANT_NAME FROM PAYMENT_DB.PUBLIC.TRANSACTIONS t INNER JOIN PAYMENT_DB.PUBLIC.MERCHANTS m ON t.MERCHANT_ID = m.MERCHANT_ID LIMIT 10')">
+                                SELECT t.TRANSACTION_ID, t.AMOUNT, m.MERCHANT_NAME FROM PAYMENT_DB.PUBLIC.TRANSACTIONS t INNER JOIN PAYMENT_DB.PUBLIC.MERCHANTS m ON t.MERCHANT_ID = m.MERCHANT_ID LIMIT 10
+                            </div>
+                            <div class="example-query" onclick="setQuery('SELECT c.EMAIL, t.AMOUNT, t.STATUS FROM PAYMENT_DB.PUBLIC.CUSTOMERS c LEFT JOIN PAYMENT_DB.PUBLIC.TRANSACTIONS t ON c.CUSTOMER_ID = t.CUSTOMER_ID WHERE t.AMOUNT > 100')">
+                                SELECT c.EMAIL, t.AMOUNT, t.STATUS FROM PAYMENT_DB.PUBLIC.CUSTOMERS c LEFT JOIN PAYMENT_DB.PUBLIC.TRANSACTIONS t ON c.CUSTOMER_ID = t.CUSTOMER_ID WHERE t.AMOUNT > 100
+                            </div>
+                            <div class="example-query" onclick="setQuery('SELECT m.MERCHANT_NAME, m.BUSINESS_TYPE, t.TRANSACTION_ID, t.AMOUNT FROM PAYMENT_DB.PUBLIC.MERCHANTS m RIGHT JOIN PAYMENT_DB.PUBLIC.TRANSACTIONS t ON m.MERCHANT_ID = t.MERCHANT_ID WHERE m.STATUS = \'ACTIVE\'')">
+                                SELECT m.MERCHANT_NAME, m.BUSINESS_TYPE, t.TRANSACTION_ID, t.AMOUNT FROM PAYMENT_DB.PUBLIC.MERCHANTS m RIGHT JOIN PAYMENT_DB.PUBLIC.TRANSACTIONS t ON m.MERCHANT_ID = t.MERCHANT_ID WHERE m.STATUS = 'ACTIVE'
+                            </div>
+                            <div class="example-query" onclick="setQuery('SELECT t.TRANSACTION_ID, m.MERCHANT_NAME, c.EMAIL, t.AMOUNT FROM PAYMENT_DB.PUBLIC.TRANSACTIONS t JOIN PAYMENT_DB.PUBLIC.MERCHANTS m ON t.MERCHANT_ID = m.MERCHANT_ID JOIN PAYMENT_DB.PUBLIC.CUSTOMERS c ON t.CUSTOMER_ID = c.CUSTOMER_ID WHERE t.STATUS = \'SUCCESS\' LIMIT 10')">
+                                SELECT t.TRANSACTION_ID, m.MERCHANT_NAME, c.EMAIL, t.AMOUNT FROM PAYMENT_DB.PUBLIC.TRANSACTIONS t JOIN PAYMENT_DB.PUBLIC.MERCHANTS m ON t.MERCHANT_ID = m.MERCHANT_ID JOIN PAYMENT_DB.PUBLIC.CUSTOMERS c ON t.CUSTOMER_ID = c.CUSTOMER_ID WHERE t.STATUS = 'SUCCESS' LIMIT 10
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="example-category" id="advanced-section">
+                        <h3>🔒 Advanced Features (Password Protected)</h3>
+                        <div style="margin-bottom: 15px;">
+                            <input type="password" id="advanced-password" placeholder="Enter password" style="padding: 8px; margin-right: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                            <button onclick="unlockAdvanced()" style="padding: 8px 15px; background: #4caf50; color: white; border: none; border-radius: 4px; cursor: pointer;">Unlock</button>
+                        </div>
+                        <div id="advanced-content" style="display: none;">
+                            <div class="example-query" onclick="setQuery('SELECT TRANSACTION_ID, METADATA FROM PAYMENT_DB.PUBLIC.TRANSACTIONS WHERE METADATA IS NOT NULL LIMIT 5')">
+                                SELECT TRANSACTION_ID, METADATA FROM PAYMENT_DB.PUBLIC.TRANSACTIONS WHERE METADATA IS NOT NULL LIMIT 5
+                            </div>
+                            <div class="example-query" onclick="setQuery('SELECT CUSTOMER_ID, PROFILE_DATA FROM PAYMENT_DB.PUBLIC.CUSTOMERS WHERE PROFILE_DATA IS NOT NULL LIMIT 5')">
+                                SELECT CUSTOMER_ID, PROFILE_DATA FROM PAYMENT_DB.PUBLIC.CUSTOMERS WHERE PROFILE_DATA IS NOT NULL LIMIT 5
+                            </div>
+                            <div class="example-query" onclick="setQuery('SELECT DATE_TRUNC(\'MONTH\', TRANSACTION_TIMESTAMP) AS MONTH, COUNT(*) FROM PAYMENT_DB.PUBLIC.TRANSACTIONS GROUP BY DATE_TRUNC(\'MONTH\', TRANSACTION_TIMESTAMP)')">
+                                SELECT DATE_TRUNC('MONTH', TRANSACTION_TIMESTAMP) AS MONTH, COUNT(*) FROM PAYMENT_DB.PUBLIC.TRANSACTIONS GROUP BY DATE_TRUNC('MONTH', TRANSACTION_TIMESTAMP)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </details>
+        </div>
+
+        <div class="section">
+            <h2>✍️ Write Your Snowflake SQL Query</h2>
+            <textarea id="sql-query" placeholder="Enter your Snowflake SELECT query here...
+Example: SELECT * FROM PAYMENT_DB.PUBLIC.TRANSACTIONS WHERE AMOUNT > 100 AND STATUS = 'SUCCESS'
+
+Try Snowflake functions like:
+- DATE_TRUNC('MONTH', TRANSACTION_TIMESTAMP)  
+- TRY_CAST(AMOUNT AS NUMBER(10,2))
+- CURRENT_TIMESTAMP()"></textarea>
+            <br>
+            <button onclick="executeQuery()">Execute Snowflake Query</button>
+        </div>
+
+        <div class="section">
+            <h2>📋 Query Results</h2>
+            <div id="results"></div>
+        </div>
+
+    </div>
+
+    <script>
+        window.onload = function() {
+            // Log Snowflake features to console
+            console.log('🎯 Snowflake Features Available:');
+            console.log('• VARIANT Data Types: JSON-like semi-structured data');
+            console.log('• Schema Qualified Names: PAYMENT_DB.PUBLIC.TABLE_NAME');
+            console.log('• Snowflake Functions: DATE_TRUNC, CURRENT_TIMESTAMP(), TRY_CAST');
+            console.log('• Uppercase Conventions: Column and table names');
+            console.log('• NUMBER Data Type: Precise numeric values');
+            console.log('• TIMESTAMP_NTZ: Timezone-naive timestamps');
+        };
+
+
+        function setQuery(query) {
+            document.getElementById('sql-query').value = query;
+        }
+
+        function executeQuery() {
+            const query = document.getElementById('sql-query').value.trim();
+            const resultsDiv = document.getElementById('results');
+            
+            if (!query) {
+                resultsDiv.innerHTML = '<div class="error">Please enter a query</div>';
+                return;
+            }
+
+            resultsDiv.innerHTML = '<p>Executing Snowflake query...</p>';
+
+            fetch('/execute', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query: query })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    let html = `<div class="success-info">✅ Query executed successfully! Found ${data.row_count} rows.</div>`;
+                    
+                    if (data.translated_query) {
+                        html += `<div class="translation-info">🔄 Translated Snowflake syntax: ${data.translated_query}</div>`;
+                    }
+                    
+                    if (data.row_count > 0) {
+                        html += '<div class="table-container"><table><thead><tr>';
+                        data.columns.forEach(col => {
+                            html += `<th>${col}</th>`;
+                        });
+                        html += '</tr></thead><tbody>';
+                        
+                        data.data.slice(0, 100).forEach(row => { // Limit display to 100 rows
+                            html += '<tr>';
+                            row.forEach(cell => {
+                                let displayValue = cell;
+                                if (cell !== null && typeof cell === 'string' && cell.startsWith('{')) {
+                                    try {
+                                        JSON.parse(cell);
+                                        displayValue = `<code style="background:#f0f0f0;padding:2px 4px;border-radius:3px;">${cell}</code>`;
+                                    } catch(e) {}
+                                }
+                                html += `<td>${displayValue !== null ? displayValue : '<em>NULL</em>'}</td>`;
+                            });
+                            html += '</tr>';
+                        });
+                        html += '</tbody></table></div>';
+                        
+                        if (data.row_count > 100) {
+                            html += `<p><em>Showing first 100 rows of ${data.row_count} total results.</em></p>`;
+                        }
+                    } else {
+                        html += '<p>No results found.</p>';
+                    }
+                    
+                    resultsDiv.innerHTML = html;
+                } else {
+                    resultsDiv.innerHTML = `<div class="error">❌ Error: ${data.error}</div>`;
+                }
+            })
+            .catch(error => {
+                resultsDiv.innerHTML = '<div class="error">❌ Network error occurred</div>';
+            });
+        }
+
+        document.getElementById('sql-query').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                executeQuery();
+            }
+        });
+
+        function unlockSorting() {
+            const password = document.getElementById('sorting-password').value;
+            if (password === 'ilovejj') {
+                document.getElementById('sorting-content').style.display = 'block';
+                document.getElementById('sorting-password').style.display = 'none';
+                document.querySelector('#sorting-section button').style.display = 'none';
+                document.querySelector('#sorting-section h3').innerHTML = '🔓 Sorting & Limiting Results (Unlocked)';
+            } else {
+                alert('Incorrect password! Try again.');
+                document.getElementById('sorting-password').value = '';
+            }
+        }
+
+        function unlockAggregation() {
+            const password = document.getElementById('aggregation-password').value;
+            if (password === 'ilovejj') {
+                document.getElementById('aggregation-content').style.display = 'block';
+                document.getElementById('aggregation-password').style.display = 'none';
+                document.querySelector('#aggregation-section button').style.display = 'none';
+                document.querySelector('#aggregation-section h3').innerHTML = '🔓 Aggregation & Grouping (Unlocked)';
+            } else {
+                alert('Incorrect password! Try again.');
+                document.getElementById('aggregation-password').value = '';
+            }
+        }
+
+        function unlockSnowflake() {
+            const password = document.getElementById('snowflake-password').value;
+            if (password === 'ilovejj') {
+                document.getElementById('snowflake-content').style.display = 'block';
+                document.getElementById('snowflake-password').style.display = 'none';
+                document.querySelector('#snowflake-section button').style.display = 'none';
+                document.querySelector('#snowflake-section h3').innerHTML = '🔓 Snowflake Date Functions in WHERE (Unlocked)';
+            } else {
+                alert('Incorrect password! Try again.');
+                document.getElementById('snowflake-password').value = '';
+            }
+        }
+
+        function unlockJoin() {
+            const password = document.getElementById('join-password').value;
+            if (password === 'ilovejj') {
+                document.getElementById('join-content').style.display = 'block';
+                document.getElementById('join-password').style.display = 'none';
+                document.querySelector('#join-section button').style.display = 'none';
+                document.querySelector('#join-section h3').innerHTML = '🔓 Snowflake JOIN Queries (Unlocked)';
+            } else {
+                alert('Incorrect password! Try again.');
+                document.getElementById('join-password').value = '';
+            }
+        }
+
+        function unlockAdvanced() {
+            const password = document.getElementById('advanced-password').value;
+            if (password === 'ilovejj') {
+                document.getElementById('advanced-content').style.display = 'block';
+                document.getElementById('advanced-password').style.display = 'none';
+                document.querySelector('#advanced-section button').style.display = 'none';
+                document.querySelector('#advanced-section h3').innerHTML = '🔓 Advanced Features (Unlocked)';
+            } else {
+                alert('Incorrect password! Try again.');
+                document.getElementById('advanced-password').value = '';
+            }
+        }
+
+        // Allow Enter key in password fields
+        document.addEventListener('keydown', function(e) {
+            if (e.target.id === 'sorting-password' && e.key === 'Enter') {
+                unlockSorting();
+            }
+            if (e.target.id === 'aggregation-password' && e.key === 'Enter') {
+                unlockAggregation();
+            }
+            if (e.target.id === 'snowflake-password' && e.key === 'Enter') {
+                unlockSnowflake();
+            }
+            if (e.target.id === 'join-password' && e.key === 'Enter') {
+                unlockJoin();
+            }
+            if (e.target.id === 'advanced-password' && e.key === 'Enter') {
+                unlockAdvanced();
+            }
+        });
+    </script>
+</body>
+</html>
